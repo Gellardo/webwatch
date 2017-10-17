@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 )
 
 type clock struct {
-	cid string
+	cid    string
+	create time.Time
 }
 
 var clocklist []clock
@@ -32,10 +34,10 @@ func create(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		_ = r.ParseForm()
 		clockid := r.FormValue("clockid")
-		clocklist = append(clocklist, clock{clockid})
+		clocklist = append(clocklist, clock{clockid, time.Now()})
 		fmt.Println("added clock; list: ", clocklist)
 
-		http.Redirect(w, r, "/clock", http.StatusSeeOther)
+		http.Redirect(w, r, "/clock?cid="+clockid, http.StatusSeeOther)
 
 		return
 	}
@@ -44,5 +46,16 @@ func create(w http.ResponseWriter, r *http.Request) {
 }
 
 func clockHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "yeay, created a clock")
+	cid := r.URL.Query().Get("cid")
+	var c *clock
+	for _, clock := range clocklist {
+		if clock.cid == cid {
+			c = &clock
+		}
+	}
+	if c != nil {
+		fmt.Fprint(w, "yeay, we have clock "+c.cid+c.create.String())
+	} else {
+		fmt.Fprint(w, "NO clock found, stop enumerating.")
+	}
 }
