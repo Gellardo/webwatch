@@ -8,8 +8,8 @@ import (
 )
 
 type clock struct {
-	cid    string
-	create time.Time
+	Cid    string
+	Create time.Time
 }
 
 var clocklist []clock
@@ -49,13 +49,10 @@ func clockHandler(w http.ResponseWriter, r *http.Request) {
 	cid := r.URL.Query().Get("cid")
 	var c *clock
 	for _, clock := range clocklist {
-		if clock.cid == cid {
+		if clock.Cid == cid {
 			c = &clock
 		}
 	}
-	if c != nil {
-		fmt.Fprint(w, "yeay, we have clock "+c.cid+c.create.String())
-	} else {
-		fmt.Fprint(w, "NO clock found, stop enumerating.")
-	}
+	t, err := template.ParseFiles("templates/base.html", "templates/clock.html")
+	t.Execute(w, c)
 }
