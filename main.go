@@ -26,7 +26,7 @@ func main() {
 }
 
 func root(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("templates/root.html")
+	t, _ := template.ParseFiles("templates/base.html", "templates/root.html")
 	t.Execute(w, nil)
 }
 
