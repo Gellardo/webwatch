@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"time"
+
+	"github.com/gellardo/webwatch/rand"
 )
 
 type clock struct {
@@ -33,7 +35,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 func create(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		_ = r.ParseForm()
-		clockid := r.FormValue("clockid")
+		clockid := rand.RandomString(5)
 		clocklist = append(clocklist, clock{clockid, time.Now()})
 		fmt.Println("added clock; list: ", clocklist)
 
@@ -54,5 +56,8 @@ func clockHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	t, err := template.ParseFiles("templates/base.html", "templates/clock.html")
+	if err != nil {
+		fmt.Println(err)
+	}
 	t.Execute(w, c)
 }
