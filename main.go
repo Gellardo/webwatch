@@ -19,8 +19,8 @@ var clocklist []clock
 func main() {
 	fmt.Println("Running:D")
 	http.HandleFunc("/", root)
-	http.HandleFunc("/create", create)
 	http.HandleFunc("/clock", clockHandler)
+	http.HandleFunc("/clock/create", clockCreate)
 	err := http.ListenAndServe(":1337", nil)
 	if err != nil {
 		panic(err)
@@ -32,9 +32,8 @@ func root(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
-func create(w http.ResponseWriter, r *http.Request) {
+func clockCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		_ = r.ParseForm()
 		clockid := rand.RandomString(5)
 		clocklist = append(clocklist, clock{clockid, time.Now()})
 		fmt.Println("added clock; list: ", clocklist)
