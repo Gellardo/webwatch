@@ -1,9 +1,12 @@
 {{ define "content" }}
-{{ if . }}
-<h2>Clock {{ .Cid }}</h2>
-<p>Here comes the clock which was created at {{.Create}}</p>
+{{ if .Clock }}
+<h2>Clock {{ .Clock.Cid }}</h2>
+<p>Here comes the clock which was created at {{.Clock.Create}}</p>
 <p>Buttons for start/lap/stop</p>
 <p>Sharing controls: copy link to clipboard</p>
+	{{ if not .Auth }}
+	<p>You are only a viewer.</p>
+	{{ end }}
 {{ else }}
 <h2>Nope, get a Clock</h2>
 {{ end }}

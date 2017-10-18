@@ -38,6 +38,9 @@ func clockCreate(w http.ResponseWriter, r *http.Request) {
 		clocklist = append(clocklist, clock{clockid, time.Now()})
 		fmt.Println("added clock; list: ", clocklist)
 
+		cookie := http.Cookie{Name: "token", Value: "this is a test token"}
+		http.SetCookie(w, &cookie)
+
 		http.Redirect(w, r, "/clock?cid="+clockid, http.StatusSeeOther)
 
 		return
@@ -48,6 +51,11 @@ func clockCreate(w http.ResponseWriter, r *http.Request) {
 
 func clockHandler(w http.ResponseWriter, r *http.Request) {
 	cid := r.URL.Query().Get("cid")
+	auth := false
+	if cookie, _ := r.Cookie("token"); cookie.Value == "this is a test token" {
+		auth = true
+	}
+
 	var c *clock
 	for _, clock := range clocklist {
 		if clock.Cid == cid {
@@ -58,5 +66,8 @@ func clockHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	t.Execute(w, c)
+	t.Execute(w, struct {
+		Clock *clock
+		Auth  bool
+	}{Clock: c, Auth: auth})
 }
