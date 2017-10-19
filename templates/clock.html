@@ -2,6 +2,48 @@
 {{ if .Clock }}
 <h2>Clock {{ .Clock.Cid }}</h2>
 <p>Here comes the clock which was created at {{.Clock.Create}}</p>
+<p>
+	<div>
+		<span id="time">0</span> <br>
+		<input class="pure-button" type="button" value="start" onclick="start();">
+		<input class="pure-button" type="button" value="stop" onclick="stop();">
+	</div>
+	<script>
+var stopwatch = function() {
+	var startAt = 0;
+	var stopAt = 0;
+	var running =false;
+	this.start = function() { startAt = startAt ? startAt : (new Date()).getTime(); running = true;}
+	this.stop = function() { stopAt = stopAt ? stopAt : (new Date).getTime(); running = false;}
+	this.time = function() { return running ? (new Date).getTime()-startAt : stopAt- startAt;}
+}
+var watch = new stopwatch();
+var time;
+var pad = "0000";
+var clocktimer;
+function show() {
+	time = document.getElementById("time");
+	update();
+}
+function prettytime(t) {
+	s = Math.floor(t / 1000)
+	m = Math.floor(s / 60)
+	return m+":"+(pad+s%60).slice(-2)+"," + (pad+t%1000).slice(-3)
+}
+function update() {
+	time.innerHTML = prettytime(watch.time())
+}
+function start() {
+	clocktimer = setInterval("update()", 10);
+	watch.start();
+}
+function stop() {
+	clearInterval(clocktimer);
+	watch.stop();
+}
+show()
+	</script>
+</p>
 <p>Buttons for start/lap/stop</p>
 <p>Sharing controls: copy link to clipboard</p>
 	{{ if not .Auth }}
