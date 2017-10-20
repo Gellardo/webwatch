@@ -6,15 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gellardo/webwatch/rand"
+	"github.com/gellardo/webwatch/clock"
 )
-
-type clock struct {
-	Cid    string
-	Create time.Time
-}
-
-var clocklist []clock
 
 func main() {
 	fmt.Println("Running:D")
@@ -34,9 +27,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 func clockCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		clockid := rand.RandomString(5)
-		clocklist = append(clocklist, clock{clockid, time.Now()})
-		fmt.Println("added clock; list: ", clocklist)
+		clockid := clock.Create("", time.Now())
 
 		cookie := http.Cookie{Name: "token", Value: "this is a test token"}
 		http.SetCookie(w, &cookie)
@@ -56,18 +47,14 @@ func clockHandler(w http.ResponseWriter, r *http.Request) {
 		auth = true
 	}
 
-	var c *clock
-	for _, clock := range clocklist {
-		if clock.Cid == cid {
-			c = &clock
-		}
-	}
+	c := clock.Get(cid)
+
 	t, err := template.ParseFiles("templates/base.html", "templates/clock.html")
 	if err != nil {
 		fmt.Println(err)
 	}
 	t.Execute(w, struct {
-		Clock *clock
+		Clock *clock.Clock
 		Auth  bool
 	}{Clock: c, Auth: auth})
 }
