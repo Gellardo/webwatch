@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/gellardo/webwatch/clock"
+	"github.com/Gellardo/webwatch/clock"
 )
 
 func main() {

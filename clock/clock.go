@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gellardo/webwatch/rand"
+	"github.com/Gellardo/webwatch/rand"
 )
 
 type Clock struct {
