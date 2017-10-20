@@ -1,6 +1,7 @@
 package clock
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,8 +14,11 @@ type Clock struct {
 }
 
 var clocklist []Clock
+var ErrClockNotFound = errors.New("Clock: not found")
 
-func Create(cid string, t time.Time) string {
+// Create a new clock.  If cid is left empty, a random identifier is chosen.
+// Returns the cid of the created clock.
+func Create(cid string) string {
 	if cid == "" {
 		cid = rand.RandomString(5)
 	}
@@ -24,11 +28,13 @@ func Create(cid string, t time.Time) string {
 	return cid
 }
 
-func Get(cid string) *Clock {
+// Get a clock with the corresponding clock identifier.
+// The returned pointer will be nil if the clock does not exist
+func Get(cid string) (*Clock, error) {
 	for _, clock := range clocklist {
 		if clock.Cid == cid {
-			return &clock
+			return &clock, nil
 		}
 	}
-	return nil
+	return nil, ErrClockNotFound
 }

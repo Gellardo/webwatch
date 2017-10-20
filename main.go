@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"time"
 
 	"github.com/gellardo/webwatch/clock"
 )
 
 func main() {
+	//debug
+	clock.Create("1")
+
 	fmt.Println("Running:D")
 	http.HandleFunc("/", root)
 	http.HandleFunc("/clock", clockHandler)
@@ -27,7 +29,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 func clockCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		clockid := clock.Create("", time.Now())
+		clockid := clock.Create("")
 
 		cookie := http.Cookie{Name: "token", Value: "this is a test token"}
 		http.SetCookie(w, &cookie)
@@ -47,7 +49,7 @@ func clockHandler(w http.ResponseWriter, r *http.Request) {
 		auth = true
 	}
 
-	c := clock.Get(cid)
+	c, _ := clock.Get(cid)
 
 	t, err := template.ParseFiles("templates/base.html", "templates/clock.html")
 	if err != nil {
